@@ -1,0 +1,15 @@
+{
+  "name": "green-core-stats",
+  "version": "1.0.0",
+  "description": "Self-generated, retro-futuristic GitHub stats cards for your profile README. No external server.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Filipe Araujo",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test",
+    "examples": "node scripts/examples.mjs",
+    "sample": "GCS_SAMPLE=1 GCS_OUTPUT_DIR=out node src/cli.mjs"
+  },
+  "keywords": ["github-action", "readme", "profile", "stats", "svg", "y2k", "retro"]
+}

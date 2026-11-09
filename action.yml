@@ -1,0 +1,63 @@
+name: Green Core Stats
+description: Self-generated, retro-futuristic GitHub stats cards (SVG) committed to your own repo. No external server.
+author: Filipe Araujo
+branding:
+  icon: activity
+  color: green
+
+inputs:
+  username:
+    description: GitHub username to build the cards for.
+    required: false
+    default: ${{ github.repository_owner }}
+  theme:
+    description: "Card theme: green-core, amber-terminal, ice-blue or vaporwave."
+    required: false
+    default: green-core
+  output-dir:
+    description: Folder where stats.svg and langs.svg are written.
+    required: false
+    default: assets
+  langs-count:
+    description: How many languages to show (1-6).
+    required: false
+    default: "6"
+  commit:
+    description: Commit and push the generated cards ("true" or "false").
+    required: false
+    default: "true"
+  token:
+    description: Token used to read the GitHub API. The default workflow token is enough.
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Generate cards
+      shell: bash
+      run: node "${{ github.action_path }}/src/cli.mjs"
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+        GCS_USERNAME: ${{ inputs.username }}
+        GCS_THEME: ${{ inputs.theme }}
+        GCS_OUTPUT_DIR: ${{ inputs.output-dir }}
+        GCS_LANGS_COUNT: ${{ inputs.langs-count }}
+
+    - name: Commit cards
+      if: inputs.commit == 'true'
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add "${{ inputs.output-dir }}/stats.svg" "${{ inputs.output-dir }}/langs.svg"
+        if git diff --cached --quiet; then
+          echo "Cards unchanged, nothing to commit."
+        else
+          git commit -m "chore: update green-core-stats cards"
+          git push
+        fi

@@ -1,0 +1,19 @@
+# Runs this repo's own action on its owner, so the README always shows a live card.
+name: Demo cards
+
+on:
+  schedule:
+    - cron: "23 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          output-dir: demo
